@@ -5,6 +5,8 @@ Fork of [Blender-Uma-Addon](https://github.com/XiaoVonline/Blender-Uma-Addon) wi
 
 This SHOULD be compatible with newer versions as the Blender 3.6 fallbacks are defined as other functions in respective files.
 
+I also plan on making this compatible with even older versions and adding more functions, so please feel free to give me ideas!
+
 # Requires:
 
 ### Blender MMD Tools

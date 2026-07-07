@@ -56,15 +56,12 @@ jobs:
           VERSION=$(grep '^version =' blender_manifest.toml | cut -d '"' -f 2)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
       
-      - name: Generate changelog
-        id: changelog
+      - name: Prepare release notes
         run: |
           if [ -f "CHANGELOG.md" ]; then
-            echo "changelog<<EOF" >> $GITHUB_OUTPUT
-            cat CHANGELOG.md >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
+            cp CHANGELOG.md RELEASE_NOTES.md
           else
-            echo "changelog=## 🚀 Version ${{ steps.manifest.outputs.version }}" >> $GITHUB_OUTPUT
+            printf '## 🚀 Version %s\n' "${{ steps.manifest.outputs.version }}" > RELEASE_NOTES.md
           fi
       
       - name: Create Release
@@ -74,9 +71,8 @@ jobs:
           TAG="${{ github.ref_name }}"
           VERSION="${{ steps.manifest.outputs.version }}"
           ZIP_FILE="umayuru-${VERSION}.zip"
-          NOTES="${{ steps.changelog.outputs.changelog }}"
           
           gh release create "$TAG" \
             --title "Umayuru $VERSION" \
-            --notes "$NOTES" \
+            --notes-file RELEASE_NOTES.md \
             "$ZIP_FILE"

@@ -18,13 +18,16 @@ jobs:
       - name: Extract version from manifest
         id: manifest
         run: |
-          VERSION=$(grep '^version =' umayuru/blender_manifest.toml | cut -d '"' -f 2)
+          VERSION=$(grep '^version =' blender_manifest.toml | cut -d '"' -f 2)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
       
       - name: Package addon
         run: |
-          mkdir build
-          cp -r umayuru build/
+          mkdir -p build/umayuru
+          cp __init__.py build/umayuru/
+          cp blender_manifest.toml build/umayuru/
+          cp -r addons build/umayuru/
+          cp -r common build/umayuru/
           cp LICENSE build/umayuru/ 2>/dev/null || true
           cd build
           zip -r ../umayuru-${{ steps.manifest.outputs.version }}.zip umayuru/
@@ -40,6 +43,8 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
       - uses: actions/download-artifact@v4
         with:
           name: addon-package
@@ -48,7 +53,7 @@ jobs:
       - name: Extract version from manifest
         id: manifest
         run: |
-          VERSION=$(grep '^version =' umayuru/blender_manifest.toml | cut -d '"' -f 2)
+          VERSION=$(grep '^version =' blender_manifest.toml | cut -d '"' -f 2)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
       
       - name: Generate changelog
